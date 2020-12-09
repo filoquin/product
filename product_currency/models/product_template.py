@@ -28,3 +28,14 @@ class ProductTemplate(models.Model):
         for rec in forced_products:
             rec.currency_id = rec.force_currency_id
         super(ProductTemplate, self - forced_products)._compute_currency_id()
+
+    @api.depends_context('force_company',
+                         'force_currency_id',
+                         'company_id',
+                         'company_id.currency_id')
+    def _compute_cost_currency_id(self):
+        forced_products = self.filtered('force_currency_id')
+        for rec in forced_products:
+            rec.cost_currency_id = rec.force_currency_id
+
+        super(ProductTemplate, self - forced_products)._compute_cost_currency_id()
